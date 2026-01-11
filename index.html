@@ -1,324 +1,444 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NVCT 非暴力沟通人格测试</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        /* 页面容器 */
+        .page-container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        /* 页面通用样式 */
+        .page {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .page.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* 卡片样式 */
+        .info-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        h2 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .subtitle {
+            color: #666;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        
+        /* 表单组 */
+        .form-group {
+            margin-bottom: 35px;
+        }
+        
+        .form-label {
+            display: block;
+            color: #444;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        /* 选项网格 */
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px;
+        }
+        
+        /* 选项按钮 */
+        .option-btn {
+            padding: 14px 10px;
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            color: #495057;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+        
+        .option-btn:hover {
+            border-color: #4f46e5;
+            transform: translateY(-2px);
+        }
+        
+        .option-btn.selected {
+            background: #4f46e5;
+            color: white;
+            border-color: #4f46e5;
+        }
+        
+        /* 按钮组 */
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            gap: 20px;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 16px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #495057;
+            border: 2px solid #e9ecef;
+        }
+        
+        .btn-secondary:hover:not(:disabled) {
+            background: #e9ecef;
+        }
+        
+        .btn-primary {
+            background: #4f46e5;
+            color: white;
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+            background: #4338ca;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(79, 70, 229, 0.3);
+        }
+        
+        /* 欢迎页特殊样式 */
+        #welcomePage .info-card {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .welcome-title {
+            font-size: 32px;
+            color: #4f46e5;
+            margin-bottom: 20px;
+        }
+        
+        .welcome-text {
+            color: #666;
+            font-size: 18px;
+            line-height: 1.8;
+            margin-bottom: 30px;
+        }
+        
+        .start-btn {
+            background: #4f46e5;
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            font-size: 18px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+        
+        .start-btn:hover {
+            background: #4338ca;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .info-card {
+                padding: 25px;
+                margin: 10px;
+            }
+            
+            h2 {
+                font-size: 24px;
+            }
+            
+            .options-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .info-card {
+                padding: 20px;
+            }
+            
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
-    <!-- 管理员密码验证模态框 -->
-    <div id="adminModal" class="modal">
-        <div class="modal-content">
-            <h3>管理员验证</h3>
-            <p>请输入管理员密码访问数据分析面板</p>
-            <input type="password" id="adminPassword" placeholder="输入密码">
-            <div class="modal-buttons">
-                <button id="submitAdminPassword">进入面板</button>
-                <button id="cancelAdmin">取消</button>
+    <div class="page-container">
+        <!-- 欢迎页 -->
+        <div id="welcomePage" class="page active">
+            <div class="info-card">
+                <h1 class="welcome-title">NVCT</h1>
+                <h2>非暴力沟通人格测试</h2>
+                
+                <div class="welcome-text">
+                    <p>亲爱的探索者：</p >
+                    <p>欢迎来到你内心的沟通花园。</p >
+                    <p>在这片由观察、感受、需要和请求构成的土壤中，</p >
+                    <p>你独特的沟通风格正在悄然绽放。</p >
+                    <p>这份报告不是标签，而是地图——</p >
+                    <p>一张帮助你理解自己、连接他人、</p >
+                    <p>在关系世界中更自由行走的心灵地图。</p >
+                    <p>请带着温柔的好奇心，</p >
+                    <p>开始这段自我发现的旅程吧。</p >
+                </div>
+                
+                <button id="startTest" class="start-btn">开始测试</button>
             </div>
         </div>
-    </div>
-
-    <!-- 主应用容器 -->
-    <div id="app">
-        <!-- Logo区域 -->
-        <header class="logo-container">
-            <div class="logo">
-                <div class="logo-icon">💬</div>
-                <div class="logo-text">
-                    <h1>NVCT</h1>
-                    <p>非暴力沟通人格测试</p>
-                </div>
-            </div>
-        </header>
-
-        <!-- 主内容区域 -->
-        <main>
-            <!-- 首页 -->
-            <section id="welcomePage" class="page active">
-                <div class="page-content">
-                    <div class="welcome-card">
-                        <h2>亲爱的探索者：</h2>
-                        <div class="welcome-text">
-                            <p>欢迎来到你内心的沟通花园。</p>
-                            <p>在这片由观察、感受、需要和请求构成的土壤中，</p>
-                            <p>你独特的沟通风格正在悄然绽放。</p>
-                            <br>
-                            <p>这份报告不是标签，而是地图——</p>
-                            <p>一张帮助你理解自己、连接他人、</p>
-                            <p>在关系世界中更自由行走的心灵地图。</p>
-                            <br>
-                            <p>请带着温柔的好奇心，</p>
-                            <p>开始这段自我发现的旅程吧。</p>
-                        </div>
-                        <button id="startTest" class="btn-primary">开始测试</button>
-                    </div>
-                </div>
-            </section>
-
         
-
-  <!-- 用户信息收集页 -->
-<section id="userInfoPage" class="page">
-    <div class="page-content">
-        <div class="info-card">
-            <h2>让我们先了解您</h2>
-            <p class="subtitle">这些信息仅用于个性化分析，我们将严格保护您的隐私</p >
-            
-            <div class="info-form">
-                <!-- 年龄选择 -->
+        <!-- 第一页：年龄和性别 -->
+        <div id="page1" class="page">
+            <div class="info-card">
+                <h2>让我们先了解您</h2>
+                <p class="subtitle">这些信息仅用于个性化分析，我们将严格保护您的隐私</p >
+                
                 <div class="form-group">
                     <label class="form-label">年龄区间</label>
-                    <div class="options-container">
-                        <div class="options-grid">
-                            <button type="button" class="info-option-btn" data-value="18岁以下">18岁以下</button>
-                            <button type="button" class="info-option-btn" data-value="18-25">18-25岁</button>
-                            <button type="button" class="info-option-btn" data-value="26-35">26-35岁</button>
-                            <button type="button" class="info-option-btn" data-value="36-45">36-45岁</button>
-                            <button type="button" class="info-option-btn" data-value="46-55">46-55岁</button>
-                            <button type="button" class="info-option-btn" data-value="56岁以上">56岁以上</button>
-                        </div>
+                    <div class="options-grid">
+                        <button type="button" class="option-btn" data-value="18岁以下">18岁以下</button>
+                        <button type="button" class="option-btn" data-value="18-25">18-25岁</button>
+                        <button type="button" class="option-btn" data-value="26-35">26-35岁</button>
+                        <button type="button" class="option-btn" data-value="36-45">36-45岁</button>
+                        <button type="button" class="option-btn" data-value="46-55">46-55岁</button>
+                        <button type="button" class="option-btn" data-value="56岁以上">56岁以上</button>
                     </div>
                 </div>
-
-                <!-- 性别选择 -->
+                
                 <div class="form-group">
                     <label class="form-label">性别</label>
-                    <div class="options-container">
-                        <div class="options-grid">
-                            <button type="button" class="info-option-btn" data-value="男">男</button>
-                            <button type="button" class="info-option-btn" data-value="女">女</button>
-                            <button type="button" class="info-option-btn" data-value="其他">其他</button>
-                            <button type="button" class="info-option-btn" data-value="不愿透露">不愿透露</button>
-                        </div>
+                    <div class="options-grid">
+                        <button type="button" class="option-btn" data-value="男">男</button>
+                        <button type="button" class="option-btn" data-value="女">女</button>
+                        <button type="button" class="option-btn" data-value="其他">其他</button>
+                        <button type="button" class="option-btn" data-value="不愿透露">不愿透露</button>
                     </div>
                 </div>
-    
-                <!-- 底部按钮 -->
-                <div class="form-actions">
-                    <button type="button" id="backToWelcome" class="btn-secondary">
-                        <span class="btn-text">返回</span>
-                    </button>
-                    <button type="button" id="submitUserInfo" class="btn-primary" disabled>
-                        <span class="btn-text">开始测试</span>
-                    </button>
+                
+                <div class="button-group">
+                    <button id="backToWelcome" class="btn btn-secondary">上一题</button>
+                    <button id="nextToPage2" class="btn btn-primary" disabled>下一步</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 第二页：职业 -->
+        <div id="page2" class="page">
+            <div class="info-card">
+                <h2>请选择您的职业</h2>
+                <p class="subtitle">这些信息仅用于个性化分析，我们将严格保护您的隐私</p >
+                
+                <div class="form-group">
+                    <label class="form-label">职业</label>
+                    <div class="options-grid">
+                        <button type="button" class="option-btn" data-value="学生">学生</button>
+                        <button type="button" class="option-btn" data-value="教育">教育</button>
+                        <button type="button" class="option-btn" data-value="IT/科技">IT/科技</button>
+                        <button type="button" class="option-btn" data-value="医疗">医疗</button>
+                        <button type="button" class="option-btn" data-value="金融">金融</button>
+                        <button type="button" class="option-btn" data-value="销售/市场">销售/市场</button>
+                        <button type="button" class="option-btn" data-value="自由职业">自由职业</button>
+                        <button type="button" class="option-btn" data-value="其他">其他</button>
+                    </div>
+                </div>
+                
+                <div class="button-group">
+                    <button id="backToPage1" class="btn btn-secondary">上一题</button>
+                    <button id="startQuestions" class="btn btn-primary" disabled>开始测试</button>
                 </div>
             </div>
         </div>
     </div>
-</section>                        
-                       <!-- 题目显示 -->
-                        <div class="question-container">
-                            <div class="question-category"></div>
-                            <h2 class="question-text"></h2>
-                            <div class="question-options"></div>
-                        </div>
 
-                        <!-- 导航按钮 -->
-                        <div class="test-navigation">
-                            <button id="prevQuestion" class="btn-secondary" disabled>上一题</button>
-                            <button id="nextQuestion" class="btn-primary">下一题</button>
-                            <button id="submitTest" class="btn-submit" style="display: none;">查看结果</button>
-                        </div>
-                    </div>
-                </div>
-            </section>
+    <script>
+        // 用户数据存储
+        const userData = {
+            age: '',
+            gender: '',
+            job: ''
+        };
 
-            <!-- 结果页面 -->
-            <section id="resultPage" class="page">
-                <div class="page-content">
-                    <div class="result-container">
-                        <!-- 左侧页：人格核心信息 -->
-                        <div class="result-left">
-                            <div class="personality-header">
-                                <h1 class="personality-name"></h1>
-                                <div class="personality-badge"></div>
-                            </div>
-                            
-                            <div class="personality-visual">
-                                <div class="personality-icons"></div>
-                                <div class="core-features">
-                                    <h3>核心特征</h3>
-                                    <p class="core-description"></p>
-                                </div>
-                            </div>
-                            
-                            <div class="personality-energy">
-                                <h3>人格能量分布</h3>
-                                <div class="energy-bars"></div>
-                            </div>
-                        </div>
+        // 页面跳转函数
+        function goToPage(pageId) {
+            // 隐藏所有页面
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // 显示目标页面
+            const targetPage = document.getElementById(pageId);
+            if (targetPage) {
+                targetPage.classList.add('active');
+                window.scrollTo(0, 0);
+            }
+        }
 
-                        <!-- 右侧页：详细分析内容 -->
-                        <div class="result-right">
-                            <div class="result-navigation">
-                                <button class="nav-btn active" data-section="strengths">优势分析</button>
-                                <button class="nav-btn" data-section="challenges">潜在挑战</button>
-                                <button class="nav-btn" data-section="friendship">交友建议</button>
-                                <button class="nav-btn" data-section="relationship">婚恋指南</button>
-                                <button class="nav-btn" data-section="strategies">提升策略</button>
-                                <button class="nav-btn" data-section="notes">注意事项</button>
-                            </div>
-                            
-                            <div class="analysis-content">
-                                <!-- 内容将通过JS动态填充 -->
-                            </div>
-                            
-                            <div class="result-actions">
-                                <button id="restartTest" class="btn-secondary">重新测试</button>
-                                <button id="shareResult" class="btn-primary">分享结果</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
+        // 初始化选项按钮
+        function setupOptionButtons() {
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const questionGroup = this.closest('.form-group');
+                    const groupBtns = questionGroup.querySelectorAll('.option-btn');
+                    
+                    // 移除同组其他按钮的选中状态
+                    groupBtns.forEach(b => b.classList.remove('selected'));
+                    
+                    // 选中当前按钮
+                    this.classList.add('selected');
+                    
+                    // 检查当前页面是否完成选择
+                    checkPageCompletion();
+                });
+            });
+        }
 
-            <!-- 管理员面板 -->
-            <section id="adminPage" class="page">
-                <div class="page-content">
-                    <div class="admin-container">
-                        <div class="admin-header">
-                            <h2>NVCT 数据分析面板</h2>
-                            <div class="admin-controls">
-                                <select id="timeFilter">
-                                    <option value="today">今日</option>
-                                    <option value="week">本周</option>
-                                    <option value="month">本月</option>
-                                    <option value="all">全部数据</option>
-                                </select>
-                                <button id="exportData" class="btn-secondary">导出CSV</button>
-                                <button id="backToTest" class="btn-primary">返回测试</button>
-                            </div>
-                        </div>
+        // 检查当前页面完成情况
+        function checkPageCompletion() {
+            const currentPage = document.querySelector('.page.active');
+            
+            if (currentPage.id === 'page1') {
+                // 检查第一页（年龄和性别）
+                const ageSelected = document.querySelector('#page1 .form-group:nth-child(1) .option-btn.selected');
+                const genderSelected = document.querySelector('#page1 .form-group:nth-child(2) .option-btn.selected');
+                const nextBtn = document.getElementById('nextToPage2');
+                
+                if (ageSelected && genderSelected) {
+                    nextBtn.disabled = false;
+                    
+                    // 保存数据
+                    userData.age = ageSelected.dataset.value;
+                    userData.gender = genderSelected.dataset.value;
+                } else {
+                    nextBtn.disabled = true;
+                }
+            }
+            else if (currentPage.id === 'page2') {
+                // 检查第二页（职业）
+                const jobSelected = document.querySelector('#page2 .option-btn.selected');
+                const startBtn = document.getElementById('startQuestions');
+                
+                if (jobSelected) {
+                    startBtn.disabled = false;
+                    userData.job = jobSelected.dataset.value;
+                } else {
+                    startBtn.disabled = true;
+                }
+            }
+        }
 
-                        <!-- 实时数据概览 -->
-                        <div class="stats-overview">
-                            <div class="stat-card">
-                                <h3>当前在线</h3>
-                                <div class="stat-value" id="onlineCount">0</div>
-                                <div class="stat-desc">最近5分钟活动</div>
-                            </div>
-                            <div class="stat-card">
-                                <h3>今日测试</h3>
-                                <div class="stat-value" id="todayCount">0</div>
-                                <div class="stat-desc">测试总数</div>
-                            </div>
-                            <div class="stat-card">
-                                <h3>本月测试</h3>
-                                <div class="stat-value" id="monthCount">0</div>
-                                <div class="stat-desc">测试总数</div>
-                            </div>
-                            <div class="stat-card">
-                                <h3>平均用时</h3>
-                                <div class="stat-value" id="avgTime">0</div>
-                                <div class="stat-desc">分钟</div>
-                            </div>
-                        </div>
-
-                        <!-- 最受欢迎人格 -->
-                        <div class="top-personalities">
-                            <h3>最受欢迎人格类型 TOP 3</h3>
-                            <div class="top-list" id="topPersonalities">
-                                <!-- 通过JS动态填充 -->
-                            </div>
-                        </div>
-
-                        <!-- 图表区域 -->
-                        <div class="charts-container">
-                            <div class="chart-section">
-                                <h3>人格类型分布</h3>
-                                <canvas id="personalityChart"></canvas>
-                            </div>
-                            <div class="chart-section">
-                                <h3>用户年龄分布</h3>
-                                <canvas id="ageChart"></canvas>
-                            </div>
-                            <div class="chart-section">
-                                <h3>用户性别分布</h3>
-                                <canvas id="genderChart"></canvas>
-                            </div>
-                            <div class="chart-section">
-                                <h3>用户职业分布</h3>
-                                <canvas id="occupationChart"></canvas>
-                            </div>
-                        </div>
-
-                        <!-- 详细数据表格 -->
-                        <div class="data-table">
-                            <h3>详细测试记录</h3>
-                            <div class="table-container">
-                                <table id="recordsTable">
-                                    <thead>
-                                        <tr>
-                                            <th>时间</th>
-                                            <th>人格类型</th>
-                                            <th>年龄</th>
-                                            <th>性别</th>
-                                            <th>职业</th>
-                                            <th>用时(秒)</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <!-- 通过JS动态填充 -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- 结语页面 -->
-            <section id="endPage" class="page">
-                <div class="page-content">
-                    <div class="end-card">
-                        <h2>🌱 让理解生根，让成长发生</h2>
-                        <div class="end-text">
-                            <p>感谢你投入时间与真诚完成这次探索。</p>
-                            <p>真正的沟通智慧不在报告中，</p>
-                            <p>而在你每一天的真实相遇中。</p>
-                            <br>
-                            <p>愿你带着这份自我认知，</p>
-                            <p>在关系中更从容、更自由、更完整。</p>
-                        </div>
-                        <div class="signature">
-                            <p>—— NVCT非暴力沟通人格测试 ——</p>
-                        </div>
-                        <div class="end-actions">
-                            <button id="viewAdmin" class="btn-secondary">查看分析面板</button>
-                            <button id="restartFromEnd" class="btn-primary">重新测试</button>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </main>
-
-        <!-- 页面指示器 -->
-        <div class="page-indicator">
-            <div class="indicator-dots">
-                <span class="dot active" data-page="welcome"></span>
-                <span class="dot" data-page="info"></span>
-                <span class="dot" data-page="test"></span>
-                <span class="dot" data-page="result"></span>
-                <span class="dot" data-page="end"></span>
-            </div>
-        </div>
-
-        <!-- 提示框 -->
-        <div id="toast" class="toast"></div>
-    </div>
-
-    <!-- JavaScript文件 -->
-    <script src="questions.js"></script>
-    <script src="personalities.js"></script>
-    <script src="script.js"></script>
+        // 页面跳转事件绑定
+        document.addEventListener('DOMContentLoaded', function() {
+            setupOptionButtons();
+            
+            // 欢迎页 -> 第一页
+            document.getElementById('startTest').addEventListener('click', function() {
+                goToPage('page1');
+            });
+            
+            // 第一页 -> 第二页
+            document.getElementById('nextToPage2').addEventListener('click', function() {
+                goToPage('page2');
+            });
+            
+            // 第二页 -> 第一页
+            document.getElementById('backToPage1').addEventListener('click', function() {
+                goToPage('page1');
+            });
+            
+            // 第一页 -> 欢迎页
+            document.getElementById('backToWelcome').addEventListener('click', function() {
+                goToPage('welcomePage');
+            });
+            
+            // 第二页 -> 开始测试（这里可以跳转到你的问题页面）
+            document.getElementById('startQuestions').addEventListener('click', function() {
+                // 保存用户数据到本地存储
+                localStorage.setItem('nvctUserData', JSON.stringify(userData));
+                
+                // 输出用户数据到控制台（调试用）
+                console.log('用户数据:', userData);
+                
+                // 这里跳转到你的问题页面
+                // goToPage('questionPage1');
+                
+                // 临时显示成功消息
+                alert('信息收集完成！年龄：' + userData.age + 
+                      '，性别：' + userData.gender + 
+                      '，职业：' + userData.job + 
+                      '\n\n现在可以跳转到测试题目页面了。');
+            });
+        });
+    </script>
 </body>
 </html>
-
-
-
